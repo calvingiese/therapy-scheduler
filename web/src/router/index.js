@@ -1,11 +1,18 @@
 import { createRouter, createWebHistory } from "vue-router";
 import LoginPage from "../views/LoginPage.vue";
+import SessionDashboard from "../views/SessionDashboard.vue";
 
 const routes = [
   {
     path: "/login",
     name: "LoginPage",
     component: LoginPage,
+  },
+  {
+    path: "/session-dashboard",
+    name: "SessionDashboard",
+    component: SessionDashboard,
+    meta: { requiresAuth: true },
   },
 ];
 
