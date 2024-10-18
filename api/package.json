@@ -24,6 +24,7 @@
     "supertest": "^7.0.0"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "heroku-postbuild": "npm install"
   }
 }
