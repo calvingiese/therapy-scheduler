@@ -3,9 +3,12 @@ const cors = require('cors');
 const sequelize = require('./config/database');
 require('dotenv').config();
 
+const authRoutes = require('./routes/authRoutes');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/auth', authRoutes);
 
 sequelize.sync({ force: false }).then(() => {
   console.log('Database synced');
