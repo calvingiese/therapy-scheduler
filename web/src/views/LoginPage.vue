@@ -79,8 +79,9 @@
                 :items="roles"
                 :rules="[rules.required]"
                 required
+                data-cy="role"
               ></v-select>
-              <v-btn color="primary" type="submit">Register</v-btn>
+              <v-btn color="primary" type="submit">Submit</v-btn>
             </v-form>
           </v-card-text>
         </v-card>
