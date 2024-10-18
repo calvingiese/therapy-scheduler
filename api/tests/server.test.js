@@ -1,15 +1,22 @@
 const request = require('supertest');
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
 const sequelize = require('../config/database');
 require('dotenv').config();
 
 const authRoutes = require('../routes/authRoutes');
+const sessionRoutes = require('../routes/sessionRoutes');
+const userRoutes = require('../routes/userRoutes');
+const User = require('../models/User');
+const Session = require('../models/Session');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/auth', authRoutes);
+app.use('/sessions', sessionRoutes);
+app.use('/users', userRoutes);
 
 beforeAll(async () => {
     await sequelize.sync({ force: true });
@@ -45,6 +52,37 @@ describe('API Tests', () => {
 
             expect(response.status).toBe(200);
             expect(response.body).toHaveProperty('token');
+        });
+    });
+    describe('Protected Routes', () => {
+        let token;
+
+        beforeAll(async () => {
+            const hashedPassword = await bcrypt.hash('password', 10);
+            await User.create({ username: 'testuser', email: 'testuser@example.com', password: hashedPassword, role: 'therapist' });
+        
+            const response = await request(app).post('/auth/login').send({ email: 'testuser@example.com', password: 'password'});
+            token = response.body.token;
+        });
+        
+        afterAll(async () => {
+            await User.destroy({ where: { username: 'testuser' } });
+        });
+        
+        describe('User Routes', () => {
+            it('should fetch all clients', async () => {
+                const response = await request(app).get('/users/clients').set('Authorization', `Bearer ${token}`);
+
+                expect(response.status).toBe(200);
+                expect(Array.isArray(response.body)).toBe(true);
+            });
+
+            it('should fetch all therapists', async () => {
+                const response = await request(app).get('/users/therapists').set('Authorization', `Bearer ${token}`);
+                
+                expect(response.status).toBe(200);
+                expect(Array.isArray(response.body)).toBe(true);
+            });
         });
     });
 });
