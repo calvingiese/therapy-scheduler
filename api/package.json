@@ -22,5 +22,8 @@
     "node-mocks-http": "^1.16.1",
     "sequelize-mock": "^0.10.2",
     "supertest": "^7.0.0"
+  },
+  "scripts": {
+    "start": "node server.js"
   }
 }
